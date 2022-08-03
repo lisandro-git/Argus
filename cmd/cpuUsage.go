@@ -1,54 +1,24 @@
 package cmd
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/collectors"
-	"net/http"
+	"github.com/mackerelio/go-osstat/cpu"
+	"os"
+	"time"
 )
 
-type emr struct {
-	cpuUsage uint64
-}
-
-var cpuStatus = prometheus.NewGaugeVec(
-	prometheus.GaugeOpts{
-		Name: "cpu_usage",
-		Help: "Percentage of CPU used by the system.",
-	},
-	[]string{"cpuUsage", "usedCpuMemory"},
-)
-
-func init() {
-	// we need to register the counter so prometheus can collect this metric
-	prometheus.MustRegister(cpuStatus)
-	prometheus.Unregister(collectors.NewGoCollector())
-	prometheus.Unregister(collectors.NewBuildInfoCollector())
-}
-
-func server(w http.ResponseWriter, r *http.Request) {
-	var mr emr
-	json.NewDecoder(r.Body).Decode(&mr)
-	var status string = "OK"
-	var user string = string(mr.cpuUsage)
-
-	cpuStatus.WithLabelValues(user, status).Inc()
-}
-
-func P(data uint64) {
-	postBody, _ := json.Marshal(
-		emr{
-			cpuUsage: data,
-		},
-	)
-	requestBody := bytes.NewBuffer(postBody)
-
-	fmt.Println(requestBody)
-	_, err := http.Post("http://localhost:8080", "application/json", requestBody)
+func CpuUsage() float64 {
+	before, err := cpu.Get()
 	if err != nil {
-		return
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		return 0.0
 	}
-
+	time.Sleep(time.Duration(1) * time.Second)
+	after, err := cpu.Get()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		return 0.0
+	}
+	total := float64(after.Total - before.Total)
+	return float64(after.System-before.System) / total * 100
 }

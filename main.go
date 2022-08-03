@@ -21,10 +21,10 @@ const (
 var wg sync.WaitGroup
 
 var (
-	cpuTemp = prometheus.NewGauge(
+	cpuUsage = prometheus.NewGauge(
 		prometheus.GaugeOpts{
-			Name: "cpu_temperature_celsius",
-			Help: "Current temperature of the CPU.",
+			Name: "cpu_system_usage",
+			Help: "Current system usage of the CPU.",
 		})
 	hddSize = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -45,7 +45,7 @@ var (
 func init() {
 	prometheus.MustRegister(sysMemory)
 	prometheus.MustRegister(hddSize)
-	prometheus.MustRegister(cpuTemp)
+	prometheus.MustRegister(cpuUsage)
 }
 
 func server() {
@@ -62,7 +62,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		for {
-			cpuTemp.Set(float64(50))
+			cpuUsage.Set(cmd.CpuUsage())
 			hddSize.WithLabelValues("/mnt").Set(cmd.GetDiskSize("/mnt"))
 			hddSize.WithLabelValues("/").Set(cmd.GetDiskSize("/"))
 			sysMemory.WithLabelValues("Average").Set(cmd.SysMemoryAverage())
