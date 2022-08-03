@@ -28,17 +28,24 @@ var (
 		})
 	hddSize = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "size_of_hdd",
+			Name: "HDDSize",
 			Help: "Size of the HDD.",
 		},
 		[]string{"Path"},
 	)
 	sysMemory = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "RAM_memory",
+			Name: "RAMMemory",
 			Help: "Free space available in the RAM",
 		},
 		[]string{"RAM"},
+	)
+	networkClient = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "NetworkClient",
+			Help: "Number of clients connected to the local network",
+		},
+		[]string{"NetworkClient"},
 	)
 )
 
@@ -46,6 +53,7 @@ func init() {
 	prometheus.MustRegister(sysMemory)
 	prometheus.MustRegister(hddSize)
 	prometheus.MustRegister(cpuUsage)
+	prometheus.MustRegister(networkClient)
 }
 
 func server() {
@@ -54,10 +62,17 @@ func server() {
 }
 
 func main() {
-	wg.Add(2)
+	wg.Add(3)
 	go func() {
 		defer wg.Done()
 		server()
+	}()
+	go func() {
+		defer wg.Done()
+		for {
+			networkClient.WithLabelValues("NetworkClient").Set(float64(cmd.GetNetworkClient()))
+			time.Sleep(time.Duration(1) * time.Minute)
+		}
 	}()
 	go func() {
 		defer wg.Done()

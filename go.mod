@@ -3,6 +3,7 @@ module argus
 go 1.18
 
 require (
+	github.com/kotakanbe/go-pingscanner v0.1.0
 	github.com/mackerelio/go-osstat v0.2.2
 	github.com/prometheus/client_golang v1.12.2
 	github.com/ricochet2200/go-disk-usage/du v0.0.0-20210707232629-ac9918953285
