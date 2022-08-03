@@ -1,4 +1,4 @@
-package cmd
+package network_metrics
 
 import (
 	"fmt"

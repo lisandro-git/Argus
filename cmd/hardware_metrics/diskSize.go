@@ -1,4 +1,4 @@
-package cmd
+package hardware_metrics
 
 import (
 	"github.com/ricochet2200/go-disk-usage/du"

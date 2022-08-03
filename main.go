@@ -1,21 +1,14 @@
 package main
 
 import (
-	"argus/cmd"
+	hm "argus/cmd/hardware_metrics"
+	nm "argus/cmd/network_metrics"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
 	"sync"
 	"time"
-)
-
-const (
-	B  = 1
-	KB = 1024 * B
-	MB = 1024 * KB
-	GB = 1024 * MB
-	TB = 1024 * GB
 )
 
 var wg sync.WaitGroup
@@ -70,17 +63,17 @@ func main() {
 	go func() {
 		defer wg.Done()
 		for {
-			networkClient.WithLabelValues("NetworkClient").Set(float64(cmd.GetNetworkClient()))
+			networkClient.WithLabelValues("NetworkClient").Set(float64(nm.GetNetworkClient()))
 			time.Sleep(time.Duration(1) * time.Minute)
 		}
 	}()
 	go func() {
 		defer wg.Done()
 		for {
-			cpuUsage.Set(cmd.CpuUsage())
-			hddSize.WithLabelValues("/mnt").Set(cmd.GetDiskSize("/mnt"))
-			hddSize.WithLabelValues("/").Set(cmd.GetDiskSize("/"))
-			sysMemory.WithLabelValues("Average").Set(cmd.SysMemoryAverage())
+			cpuUsage.Set(hm.CpuUsage())
+			hddSize.WithLabelValues("/mnt").Set(hm.GetDiskSize("/mnt"))
+			hddSize.WithLabelValues("/").Set(hm.GetDiskSize("/"))
+			sysMemory.WithLabelValues("Average").Set(hm.SysMemoryAverage())
 			time.Sleep(5 * time.Second)
 		}
 	}()
