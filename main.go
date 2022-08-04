@@ -3,6 +3,7 @@ package main
 import (
 	hm "argus/cmd/hardware_metrics"
 	nm "argus/cmd/network_metrics"
+	om "argus/cmd/os_metrics"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
@@ -40,13 +41,17 @@ var (
 		},
 		[]string{"NetworkClient"},
 	)
+	uptime = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "uptime",
+			Help: "Number of days and hours the system has been up",
+		},
+		[]string{"Time"},
+	)
 )
 
 func init() {
-	prometheus.MustRegister(sysMemory)
-	prometheus.MustRegister(hddSize)
-	prometheus.MustRegister(cpuUsage)
-	prometheus.MustRegister(networkClient)
+	prometheus.MustRegister(sysMemory, hddSize, cpuUsage, networkClient, uptime)
 }
 
 func server() {
@@ -74,6 +79,9 @@ func main() {
 			hddSize.WithLabelValues("/mnt").Set(hm.GetDiskSize("/mnt"))
 			hddSize.WithLabelValues("/").Set(hm.GetDiskSize("/"))
 			sysMemory.WithLabelValues("Average").Set(hm.SysMemoryAverage())
+			day, hour := om.Getuptime()
+			uptime.WithLabelValues("Days").Set(day)
+			uptime.WithLabelValues("Hours").Set(hour)
 			time.Sleep(5 * time.Second)
 		}
 	}()
