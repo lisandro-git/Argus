@@ -1,15 +1,18 @@
 package os_metrics
 
 import (
+	"argus/cmd"
 	"github.com/shirou/gopsutil/host"
 )
 
-func Getuptime() (float64, float64) {
-	uptime, _ := host.Uptime()
+var uptime = cmd.NewGaugeVec("uptime", "Current uptime of the system.", []string{"Time"})
 
-	var days uint64 = uptime / (60 * 60 * 24)
-	var hours uint64 = (uptime - (days * 60 * 60 * 24)) / (60 * 60)
-	//var minutes uint64 := ((uptime - (days * 60 * 60 * 24)) - (hours * 60 * 60)) / 60
+func Getuptime() (float64, float64) {
+	os_uptime, _ := host.Uptime()
+
+	var days uint64 = os_uptime / (60 * 60 * 24)
+	var hours uint64 = (os_uptime - (days * 60 * 60 * 24)) / (60 * 60)
+	//var minutes uint64 := ((os_uptime - (days * 60 * 60 * 24)) - (hours * 60 * 60)) / 60
 
 	return float64(days), float64(hours)
 }

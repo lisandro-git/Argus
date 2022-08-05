@@ -1,15 +1,14 @@
 package hardware_metrics
 
 import (
+	"argus/cmd"
 	"fmt"
 	"github.com/mackerelio/go-osstat/cpu"
 	"os"
 	"time"
 )
 
-func init() {
-	//cpuUsage := cmd.NewGauge("cpu_system_usage", "Current system usage of the CPU.")
-}
+var cpuUsage = cmd.NewGauge("cpu_system_usage", "Current system usage of the CPU.")
 
 func CpuUsage() float64 {
 	before, err := cpu.Get()

@@ -3,6 +3,8 @@ package main
 import (
 	"argus/cmd"
 	hm "argus/cmd/hardware_metrics"
+	nm "argus/cmd/network_metrics"
+	om "argus/cmd/os_metrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
@@ -17,14 +19,8 @@ var (
 	cpuUsage = cmd.NewGauge("cpu_system_usage", "Current system usage of the CPU.")
 	hddSize  = cmd.NewGaugeVec("hdd_size", "Current size of the HDD.", []string{"Path"})
 	//sysMemory      = cmd.NewGaugeVec("sys_memory", "Current system memory usage.", []string{"RAM"})
-	networkClient  = cmd.NewGaugeVec("network_client", "Current network client usage.", []string{"NetworkClient"})
-	uptime         = cmd.NewGaugeVec("uptime", "Current uptime of the system.", []string{"Time"})
-	networkLatency = cmd.NewGaugeVec("network_latency", "Current network latency.", []string{"Latency"})
+
 )
-
-func init() {
-
-}
 
 func server() { // https://developpaper.com/implementation-of-prometheus-custom-exporter/
 	h := promhttp.HandlerFor(cmd.Gatherer, promhttp.HandlerOpts{
@@ -59,14 +55,10 @@ func main() {
 	go func() {
 		defer wg.Done()
 		for {
-			//cpuUsage.Set(hm.CpuUsage())
-			hddSize.WithLabelValues("/mnt").Set(hm.GetDiskSize("/mnt"))
-			hddSize.WithLabelValues("/").Set(hm.GetDiskSize("/"))
-			//hm.sysMemory.WithLabelValues("Average").Set(hm.SysMemoryAverage())
 			hm.SendMetrics()
-			//day, hour := om.Getuptime()
-			//uptime.WithLabelValues("Days").Set(day)
-			//uptime.WithLabelValues("Hours").Set(hour)
+			nm.SendMetrics()
+			om.SendMetrics()
+
 			//_, latency := nm.PingClient(true, false, "192.168.1.240")
 			//networkLatency.WithLabelValues("192.168.1.240").Set((float64(latency.Microseconds()) / 1000.0))
 			time.Sleep(5 * time.Second)

@@ -1,9 +1,12 @@
 package network_metrics
 
 import (
+	"argus/cmd"
 	"fmt"
 	ps "github.com/kotakanbe/go-pingscanner"
 )
+
+var networkClient = cmd.NewGaugeVec("network_client", "Current network client usage.", []string{"NetworkClient"})
 
 func GetNetworkClient() int {
 	scanner := ps.PingScanner{

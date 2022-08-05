@@ -1,6 +1,7 @@
 package network_metrics
 
 import (
+	"argus/cmd"
 	"fmt"
 	"net"
 	"os"
@@ -20,6 +21,7 @@ var (
 	remoteAddr  *net.IPAddr
 	pinger      *ping.Pinger
 )
+var networkLatency = cmd.NewGaugeVec("network_latency", "Current network latency.", []string{"Latency"})
 
 func PingClient(proto4, proto6 bool, host string) (*net.IPAddr, time.Duration) {
 	var network string
