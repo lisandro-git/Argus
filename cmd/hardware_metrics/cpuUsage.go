@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+func init() {
+	//cpuUsage := cmd.NewGauge("cpu_system_usage", "Current system usage of the CPU.")
+}
+
 func CpuUsage() float64 {
 	before, err := cpu.Get()
 	if err != nil {
