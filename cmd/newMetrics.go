@@ -1,6 +1,8 @@
 package cmd
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"github.com/prometheus/client_golang/prometheus"
+)
 
 var (
 	Register *prometheus.Registry = NewRegisterer()
@@ -33,8 +35,6 @@ func NewGatherer(reg *prometheus.Registry) prometheus.Gatherer {
 	return prometheus.Gatherers{reg}
 }
 
-func RegisterGauge[C Deck](gauge C) {
-	x := prometheus.Desc{}
-	y := prometheus.MetricVec{}
-	Register.MustRegister(a)
+func RegisterCollector(C interface{ prometheus.Collector }) {
+	Register.MustRegister(C)
 }

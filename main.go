@@ -14,9 +14,9 @@ import (
 var wg sync.WaitGroup
 
 var (
-	cpuUsage       = cmd.NewGauge("cpu_system_usage", "Current system usage of the CPU.")
-	hddSize        = cmd.NewGaugeVec("hdd_size", "Current size of the HDD.", []string{"Path"})
-	sysMemory      = cmd.NewGaugeVec("sys_memory", "Current system memory usage.", []string{"RAM"})
+	cpuUsage = cmd.NewGauge("cpu_system_usage", "Current system usage of the CPU.")
+	hddSize  = cmd.NewGaugeVec("hdd_size", "Current size of the HDD.", []string{"Path"})
+	//sysMemory      = cmd.NewGaugeVec("sys_memory", "Current system memory usage.", []string{"RAM"})
 	networkClient  = cmd.NewGaugeVec("network_client", "Current network client usage.", []string{"NetworkClient"})
 	uptime         = cmd.NewGaugeVec("uptime", "Current uptime of the system.", []string{"Time"})
 	networkLatency = cmd.NewGaugeVec("network_latency", "Current network latency.", []string{"Latency"})
@@ -27,10 +27,7 @@ func init() {
 }
 
 func server() { // https://developpaper.com/implementation-of-prometheus-custom-exporter/
-	reg := cmd.NewRegisterer()
-	gatherers := cmd.NewGatherer(reg)
-	reg.MustRegister(cpuUsage)
-	h := promhttp.HandlerFor(gatherers, promhttp.HandlerOpts{
+	h := promhttp.HandlerFor(cmd.Gatherer, promhttp.HandlerOpts{
 		ErrorHandling: promhttp.ContinueOnError,
 	})
 
@@ -65,7 +62,8 @@ func main() {
 			//cpuUsage.Set(hm.CpuUsage())
 			hddSize.WithLabelValues("/mnt").Set(hm.GetDiskSize("/mnt"))
 			hddSize.WithLabelValues("/").Set(hm.GetDiskSize("/"))
-			sysMemory.WithLabelValues("Average").Set(hm.SysMemoryAverage())
+			//hm.sysMemory.WithLabelValues("Average").Set(hm.SysMemoryAverage())
+			hm.SendMetrics()
 			//day, hour := om.Getuptime()
 			//uptime.WithLabelValues("Days").Set(day)
 			//uptime.WithLabelValues("Hours").Set(hour)

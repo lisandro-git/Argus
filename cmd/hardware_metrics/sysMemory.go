@@ -1,6 +1,15 @@
 package hardware_metrics
 
-import "syscall"
+import (
+	"argus/cmd"
+	"syscall"
+)
+
+var SysMemory = cmd.NewGaugeVec("sys_memory", "Current system memory usage.", []string{"RAM"})
+
+func init() {
+	cmd.RegisterCollector(SysMemory)
+}
 
 func SysTotalMemory() uint64 {
 	in := &syscall.Sysinfo_t{}
@@ -28,4 +37,8 @@ func SysFreeMemory() uint64 {
 
 func SysMemoryAverage() float64 {
 	return ((float64(SysFreeMemory()) / (1024 * 1024 * 1024)) / (float64(SysTotalMemory()) / (1024 * 1024 * 1024)) * 100)
+}
+
+func SendMetrics() {
+	SysMemory.WithLabelValues("RAM").Set(SysMemoryAverage())
 }
