@@ -15,14 +15,7 @@ import (
 
 var wg sync.WaitGroup
 
-var (
-	cpuUsage = cmd.NewGauge("cpu_system_usage", "Current system usage of the CPU.")
-	hddSize  = cmd.NewGaugeVec("hdd_size", "Current size of the HDD.", []string{"Path"})
-	//sysMemory      = cmd.NewGaugeVec("sys_memory", "Current system memory usage.", []string{"RAM"})
-
-)
-
-func server() { // https://developpaper.com/implementation-of-prometheus-custom-exporter/
+func server() {
 	h := promhttp.HandlerFor(cmd.Gatherer, promhttp.HandlerOpts{
 		ErrorHandling: promhttp.ContinueOnError,
 	})
@@ -38,29 +31,17 @@ func server() { // https://developpaper.com/implementation-of-prometheus-custom-
 }
 
 func main() {
-	//nm.PingClient(true, false, "192.168.1.240")
-
-	wg.Add(3)
+	wg.Add(2)
 	go func() {
 		defer wg.Done()
 		server()
 	}()
-	//go func() {
-	//	defer wg.Done()
-	//	for {
-	//		networkClient.WithLabelValues("NetworkClient").Set(float64(nm.GetNetworkClient()))
-	//		time.Sleep(time.Duration(1) * time.Minute)
-	//	}
-	//}()
 	go func() {
 		defer wg.Done()
 		for {
 			hm.SendMetrics()
 			nm.SendMetrics()
 			om.SendMetrics()
-
-			//_, latency := nm.PingClient(true, false, "192.168.1.240")
-			//networkLatency.WithLabelValues("192.168.1.240").Set((float64(latency.Microseconds()) / 1000.0))
 			time.Sleep(5 * time.Second)
 		}
 	}()

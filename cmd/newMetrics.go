@@ -9,10 +9,6 @@ var (
 	Gatherer prometheus.Gatherer  = NewGatherer(Register)
 )
 
-type Deck[C any] struct {
-	cards []C
-}
-
 func NewGaugeVec(name, help string, labels []string) *prometheus.GaugeVec {
 	return prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Name: name,
