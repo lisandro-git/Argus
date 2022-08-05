@@ -2,7 +2,6 @@ package network_metrics
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"time"
@@ -22,39 +21,26 @@ var (
 	pinger      *ping.Pinger
 )
 
-func PingClient(proto4, proto6 bool, host string) {
-	if proto4 == proto6 {
-		log.Fatalf("need exactly one of -4 and -6 flags")
-	}
-
+func PingClient(proto4, proto6 bool, host string) (*net.IPAddr, time.Duration) {
+	var network string
 	if bind == "" {
 		if proto4 {
 			bind = "0.0.0.0"
+			network = "ip4"
 		} else if proto6 {
 			bind = "::"
+			network = "ip6"
 		}
 	}
 
 	if proto4 {
-		if r, err := net.ResolveIPAddr("ip4", host); err != nil {
+		if r, err := net.ResolveIPAddr(network, host); err != nil {
 			panic(err)
 		} else {
 			remoteAddr = r
 		}
 
 		if p, err := ping.New(bind, ""); err != nil {
-			panic(err)
-		} else {
-			pinger = p
-		}
-	} else if proto6 {
-		if r, err := net.ResolveIPAddr("ip6", host); err != nil {
-			panic(err)
-		} else {
-			remoteAddr = r
-		}
-
-		if p, err := ping.New("", bind); err != nil {
 			panic(err)
 		} else {
 			pinger = p
@@ -66,16 +52,15 @@ func PingClient(proto4, proto6 bool, host string) {
 		pinger.SetPayloadSize(uint16(size))
 	}
 
-	unicastPing()
+	return unicastPing()
 }
 
-func unicastPing() {
+func unicastPing() (*net.IPAddr, time.Duration) {
 	rtt, err := pinger.PingAttempts(remoteAddr, timeout, int(attempts))
 
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	fmt.Printf("ping %s (%s) rtt=%v\n", destination, remoteAddr, rtt)
+	return remoteAddr, rtt
 }
