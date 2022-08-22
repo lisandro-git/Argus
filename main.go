@@ -2,9 +2,7 @@ package main
 
 import (
 	"argus/cmd"
-	hm "argus/cmd/hardware_metrics"
-	nm "argus/cmd/network_metrics"
-	om "argus/cmd/os_metrics"
+	"argus/cmd/hardware_metrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
@@ -36,12 +34,14 @@ func main() {
 		defer wg.Done()
 		server()
 	}()
+	hardware_metrics.RegisterMetrics()
 	go func() {
 		defer wg.Done()
 		for {
-			hm.SendMetrics()
-			nm.SendMetrics()
-			om.SendMetrics()
+
+			//hm.SendMetrics()
+			//nm.SendMetrics()
+			//om.SendMetrics()
 			time.Sleep(5 * time.Second)
 		}
 	}()

@@ -1,14 +1,30 @@
 package hardware_metrics
 
 import (
-	"argus/cmd"
 	"fmt"
 	"github.com/mackerelio/go-osstat/cpu"
+	"github.com/prometheus/client_golang/prometheus"
 	"os"
 	"time"
 )
 
-var cpuUsage = cmd.NewGauge("cpu_system_usage", "Current system usage of the CPU.")
+type cpuUsage struct {
+	Desc *prometheus.Desc
+}
+
+func (c *cpuUsage) Describe(ch chan<- *prometheus.Desc) {
+	ch <- c.Desc
+}
+
+func (c *cpuUsage) Collect(ch chan<- prometheus.Metric) {
+	ch <- prometheus.MustNewConstMetric(c.Desc, prometheus.GaugeValue, CpuUsage())
+}
+
+func NewCpuUsage() *cpuUsage {
+	return &cpuUsage{
+		Desc: prometheus.NewDesc("cpu_usage", "CPU usage", nil, nil),
+	}
+}
 
 func CpuUsage() float64 {
 	before, err := cpu.Get()
