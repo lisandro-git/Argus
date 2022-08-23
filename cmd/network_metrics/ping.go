@@ -1,8 +1,8 @@
 package network_metrics
 
 import (
-	"argus/cmd"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
 	"net"
 	"os"
 	"time"
@@ -21,7 +21,25 @@ var (
 	remoteAddr  *net.IPAddr
 	pinger      *ping.Pinger
 )
-var networkLatency = cmd.NewGaugeVec("network_latency", "Current network latency.", []string{"Latency"})
+
+type NetworkLatency struct {
+	networkLatency *prometheus.Desc
+}
+
+func NewNetworkLatency() *NetworkLatency {
+	return &NetworkLatency{
+		networkLatency: prometheus.NewDesc("network_latency", "Network latency", nil, nil),
+	}
+}
+
+func (n *NetworkLatency) Describe(ch chan<- *prometheus.Desc) {
+	ch <- n.networkLatency
+}
+
+func (n *NetworkLatency) Collect(ch chan<- prometheus.Metric) {
+	var _, latency = PingClient(true, false, "127.0.0.1")
+	ch <- prometheus.MustNewConstMetric(n.networkLatency, prometheus.GaugeValue, float64(latency))
+}
 
 func PingClient(proto4, proto6 bool, host string) (*net.IPAddr, time.Duration) {
 	var network string

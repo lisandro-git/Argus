@@ -1,11 +1,32 @@
 package os_metrics
 
 import (
-	"argus/cmd"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/shirou/gopsutil/host"
 )
 
-var uptime = cmd.NewGaugeVec("uptime", "Current uptime of the system.", []string{"Time"})
+type Uptime struct {
+	DayUptime  *prometheus.Desc
+	HourUptime *prometheus.Desc
+}
+
+func (u *Uptime) Describe(ch chan<- *prometheus.Desc) {
+	ch <- u.DayUptime
+	ch <- u.HourUptime
+}
+
+func (u *Uptime) Collect(ch chan<- prometheus.Metric) {
+	days, hours := Getuptime()
+	ch <- prometheus.MustNewConstMetric(u.DayUptime, prometheus.GaugeValue, days)
+	ch <- prometheus.MustNewConstMetric(u.HourUptime, prometheus.GaugeValue, hours)
+}
+
+func NewUptime() *Uptime {
+	return &Uptime{
+		DayUptime:  prometheus.NewDesc("DayUptime", "Uptime", nil, nil),
+		HourUptime: prometheus.NewDesc("HourUptime", "Uptime", nil, nil),
+	}
+}
 
 func Getuptime() (float64, float64) {
 	os_uptime, _ := host.Uptime()

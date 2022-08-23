@@ -1,12 +1,28 @@
 package network_metrics
 
 import (
-	"argus/cmd"
 	"fmt"
 	ps "github.com/kotakanbe/go-pingscanner"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
-var networkClient = cmd.NewGaugeVec("network_client", "Current network client usage.", []string{"NetworkClient"})
+type NetworkClient struct {
+	networkClient *prometheus.Desc
+}
+
+func NewNetworkClient() *NetworkClient {
+	return &NetworkClient{
+		networkClient: prometheus.NewDesc("network_client", "Number of network clients", nil, nil),
+	}
+}
+
+func (n *NetworkClient) Describe(ch chan<- *prometheus.Desc) {
+	ch <- n.networkClient
+}
+
+func (n *NetworkClient) Collect(ch chan<- prometheus.Metric) {
+	ch <- prometheus.MustNewConstMetric(n.networkClient, prometheus.GaugeValue, float64(GetNetworkClient()))
+}
 
 func GetNetworkClient() int {
 	scanner := ps.PingScanner{
