@@ -3,14 +3,11 @@ package main
 import (
 	"argus/cmd"
 	hm "argus/cmd/hardware_metrics"
-	nm "argus/cmd/network_metrics"
-	om "argus/cmd/os_metrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
 	"os"
 	"sync"
-	"time"
 )
 
 var wg sync.WaitGroup
@@ -31,19 +28,11 @@ func server() {
 }
 
 func main() {
-	wg.Add(2)
+	hm.RegisterMetrics()
+	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		server()
-	}()
-	go func() {
-		defer wg.Done()
-		for {
-			hm.SendMetrics()
-			nm.SendMetrics()
-			om.SendMetrics()
-			time.Sleep(5 * time.Second)
-		}
 	}()
 	wg.Wait()
 }
