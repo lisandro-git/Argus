@@ -16,13 +16,13 @@ var wg sync.WaitGroup
 func server() {
 	h := promhttp.HandlerFor(cmd.Gatherer, promhttp.HandlerOpts{
 		ErrorHandling: promhttp.ContinueOnError,
+		Registry:      cmd.Register,
 	})
 
-	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
-		h.ServeHTTP(w, r)
-	})
-
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	handler := promhttp.InstrumentMetricHandler(cmd.Register, h)
+	
+	http.Handle("/metrics", handler)
+	if err := http.ListenAndServe(":8080", handler); err != nil {
 		log.Printf("Error occur when start server %v", err)
 		os.Exit(1)
 	}
