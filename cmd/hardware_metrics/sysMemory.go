@@ -6,8 +6,6 @@ import (
 	"syscall"
 )
 
-//var SysMemory = cmd.NewGaugeVec("sys_memory", "Current system memory usage.", []string{"RAM"})
-
 type SysMemory struct {
 	total *prometheus.Desc
 	free  *prometheus.Desc

@@ -5,8 +5,6 @@ import (
 	"github.com/shirou/gopsutil/host"
 )
 
-//var uptime = cmd.NewGaugeVec("uptime", "Current uptime of the system.", []string{"Time"})
-
 type Uptime struct {
 	Days    *prometheus.Desc
 	Hours   *prometheus.Desc

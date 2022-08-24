@@ -20,7 +20,7 @@ func server() {
 	})
 
 	handler := promhttp.InstrumentMetricHandler(cmd.Register, h)
-	
+
 	http.Handle("/metrics", handler)
 	if err := http.ListenAndServe(":8080", handler); err != nil {
 		log.Printf("Error occur when start server %v", err)

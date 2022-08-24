@@ -6,8 +6,6 @@ import (
 	"time"
 )
 
-//var cpuUsage = cmd.NewGauge("cpu_system_usage", "Current system usage of the CPU.")
-
 type CpuUsage struct {
 	CPUser    *prometheus.Desc
 	CPNice    *prometheus.Desc
