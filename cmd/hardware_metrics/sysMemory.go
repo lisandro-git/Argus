@@ -1,6 +1,7 @@
 package hardware_metrics
 
 import (
+	"argus/cmd"
 	"github.com/prometheus/client_golang/prometheus"
 	"syscall"
 )
@@ -28,9 +29,9 @@ func (s *SysMemory) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (s *SysMemory) Collect(ch chan<- prometheus.Metric) {
-	ch <- prometheus.MustNewConstMetric(s.total, prometheus.GaugeValue, float64(SysTotalMemory()), "hello")
-	ch <- prometheus.MustNewConstMetric(s.free, prometheus.GaugeValue, float64(SysFreeMemory()), "helloo")
-	ch <- prometheus.MustNewConstMetric(s.usage, prometheus.GaugeValue, SysMemoryAverage(), "hellooo")
+	ch <- prometheus.MustNewConstMetric(s.total, prometheus.GaugeValue, float64(SysTotalMemory())/cmd.MB, "hello")
+	ch <- prometheus.MustNewConstMetric(s.free, prometheus.GaugeValue, float64(SysFreeMemory())/cmd.MB, "helloo")
+	ch <- prometheus.MustNewConstMetric(s.usage, prometheus.GaugeValue, SysMemoryAverage()/cmd.MB, "hellooo")
 }
 
 func SysTotalMemory() uint64 {
