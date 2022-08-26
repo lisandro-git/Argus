@@ -4,7 +4,7 @@ import (
 	"argus/cmd"
 	hm "argus/cmd/hardwareMetrics"
 	om "argus/cmd/osMetrics"
-	"argus/cmd/softwareMetrics"
+	sm "argus/cmd/softwareMetrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
@@ -32,7 +32,7 @@ func server() {
 func main() {
 	hm.RegisterMetrics()
 	om.RegisterMetrics()
-	go softwareMetrics.RegisterMetrics()
+	sm.RegisterMetrics()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()

@@ -3,7 +3,7 @@ package nginxCollector
 import (
 	"argus/cmd"
 	"argus/cmd/softwareMetrics/nginxCollector/client"
-	collector2 "argus/cmd/softwareMetrics/nginxCollector/collector"
+	"argus/cmd/softwareMetrics/nginxCollector/collector"
 	"context"
 	"crypto/tls"
 	"crypto/x509"
@@ -14,14 +14,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"runtime"
-	"runtime/debug"
-	"strconv"
 	"strings"
 	"syscall"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
 )
 
@@ -211,39 +207,7 @@ For NGINX, the stub_status page must be available through the URI. For NGINX Plu
 )
 
 func Start() {
-	commitHash, commitTime, dirtyBuild := getBuildInfo()
-	arch := fmt.Sprintf("%v/%v", runtime.GOOS, runtime.GOARCH)
-
-	fmt.Printf("NGINX Prometheus Exporter version=%v commit=%v date=%v, dirty=%v, arch=%v, go=%v\n", version, commitHash, commitTime, dirtyBuild, arch, runtime.Version())
-
-	if *displayVersion {
-		os.Exit(0)
-	}
-
 	log.Printf("Starting...")
-
-	registry := cmd.Registry
-
-	buildInfoMetric := prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Name: "nginxexporter_build_info",
-			Help: "Exporter build information",
-			ConstLabels: collector2.MergeLabels(
-				constLabels.labels,
-				prometheus.Labels{
-					"version": version,
-					"commit":  commitHash,
-					"date":    commitTime,
-					"dirty":   strconv.FormatBool(dirtyBuild),
-					"arch":    arch,
-					"go":      runtime.Version(),
-				},
-			),
-		},
-	)
-	buildInfoMetric.Set(1)
-
-	registry.MustRegister(buildInfoMetric)
 
 	// #nosec G402
 	sslConfig := &tls.Config{InsecureSkipVerify: !*sslVerify}
@@ -316,7 +280,7 @@ func Start() {
 	if err != nil {
 		log.Fatalf("Could not create Nginx Client: %v", err)
 	}
-	cmd.RegisterCollector(collector2.NewNginxCollector(ossClient.(*client.NginxClient), "nginxplus", constLabels.labels))
+	cmd.RegisterCollector(collector.NewNginxCollector(ossClient.(*client.NginxClient), "nginxplus", constLabels.labels))
 
 	//if *securedMetrics {
 	//	_, err = os.Stat(*sslServerCert)
@@ -357,24 +321,4 @@ func cloneRequest(req *http.Request) *http.Request {
 		r.Header[key] = newValues
 	}
 	return r
-}
-
-func getBuildInfo() (string, string, bool) {
-	var commitHash, commitTime string
-	var dirtyBuild bool
-	info, ok := debug.ReadBuildInfo()
-	if !ok {
-		return "", "", false
-	}
-	for _, kv := range info.Settings {
-		switch kv.Key {
-		case "vcs.revision":
-			commitHash = kv.Value
-		case "vcs.time":
-			commitTime = kv.Value
-		case "vcs.modified":
-			dirtyBuild = kv.Value == "true"
-		}
-	}
-	return commitHash, commitTime, dirtyBuild
 }
