@@ -1,4 +1,4 @@
-package hardware_metrics
+package hardwareMetrics
 
 import (
 	"argus/cmd"

@@ -2,8 +2,9 @@ package main
 
 import (
 	"argus/cmd"
-	hm "argus/cmd/hardware_metrics"
-	om "argus/cmd/os_metrics"
+	hm "argus/cmd/hardwareMetrics"
+	om "argus/cmd/osMetrics"
+	"argus/cmd/softwareMetrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
@@ -16,10 +17,10 @@ var wg sync.WaitGroup
 func server() {
 	h := promhttp.HandlerFor(cmd.Gatherer, promhttp.HandlerOpts{
 		ErrorHandling: promhttp.ContinueOnError,
-		Registry:      cmd.Register,
+		Registry:      cmd.Registry,
 	})
 
-	handler := promhttp.InstrumentMetricHandler(cmd.Register, h)
+	var handler http.Handler = promhttp.InstrumentMetricHandler(cmd.Registry, h)
 
 	http.Handle("/metrics", handler)
 	if err := http.ListenAndServe(":8080", handler); err != nil {
@@ -31,6 +32,7 @@ func server() {
 func main() {
 	hm.RegisterMetrics()
 	om.RegisterMetrics()
+	go softwareMetrics.RegisterMetrics()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()

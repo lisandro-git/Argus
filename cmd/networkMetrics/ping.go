@@ -1,4 +1,4 @@
-package network_metrics
+package networkMetrics
 
 import (
 	"argus/cmd"
@@ -13,13 +13,12 @@ import (
 var (
 	attempts       uint = 3
 	timeout             = time.Second
-	proto4, proto6 bool
 	size           uint = 56
+	proto4, proto6 bool
 	bind           string
-
-	destination string
-	remoteAddr  *net.IPAddr
-	pinger      *ping.Pinger
+	destination    string
+	remoteAddr     *net.IPAddr
+	pinger         *ping.Pinger
 )
 var networkLatency = cmd.NewGaugeVec("network_latency", "Current network latency.", []string{"Latency"})
 

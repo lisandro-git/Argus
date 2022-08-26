@@ -5,8 +5,8 @@ import (
 )
 
 var (
-	Register *prometheus.Registry = NewRegisterer()
-	Gatherer prometheus.Gatherer  = NewGatherer(Register)
+	Registry *prometheus.Registry = NewRegisterer()
+	Gatherer prometheus.Gatherer  = NewGatherer(Registry)
 )
 
 func NewGaugeVec(name, help string, labels []string) *prometheus.GaugeVec {
@@ -32,5 +32,5 @@ func NewGatherer(reg *prometheus.Registry) prometheus.Gatherer {
 }
 
 func RegisterCollector(C interface{ prometheus.Collector }) {
-	Register.MustRegister(C)
+	Registry.MustRegister(C)
 }

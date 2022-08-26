@@ -2,8 +2,8 @@ package nginxCollector
 
 import (
 	"argus/cmd"
-	"argus/cmd/software_metrics/nginxCollector/client"
-	collector2 "argus/cmd/software_metrics/nginxCollector/collector"
+	"argus/cmd/softwareMetrics/nginxCollector/client"
+	collector2 "argus/cmd/softwareMetrics/nginxCollector/collector"
 	"context"
 	"crypto/tls"
 	"crypto/x509"

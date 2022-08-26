@@ -1,7 +1,7 @@
 package collector
 
 import (
-	"argus/cmd/software_metrics/nginxCollector/client"
+	"argus/cmd/softwareMetrics/nginxCollector/client"
 	"log"
 	"sync"
 

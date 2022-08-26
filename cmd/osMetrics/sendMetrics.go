@@ -1,4 +1,4 @@
-package os_metrics
+package osMetrics
 
 import "argus/cmd"
 

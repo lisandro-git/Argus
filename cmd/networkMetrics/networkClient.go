@@ -1,4 +1,4 @@
-package network_metrics
+package networkMetrics
 
 import (
 	"argus/cmd"

@@ -1,4 +1,4 @@
-package os_metrics
+package osMetrics
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
