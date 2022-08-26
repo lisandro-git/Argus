@@ -27,9 +27,9 @@ func (s *SysMemory) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (s *SysMemory) Collect(ch chan<- prometheus.Metric) {
-	ch <- prometheus.MustNewConstMetric(s.total, prometheus.GaugeValue, float64(SysTotalMemory())/cmd.MB, "hello")
-	ch <- prometheus.MustNewConstMetric(s.free, prometheus.GaugeValue, float64(SysFreeMemory())/cmd.MB, "helloo")
-	ch <- prometheus.MustNewConstMetric(s.usage, prometheus.GaugeValue, SysMemoryAverage()/cmd.MB, "hellooo")
+	ch <- prometheus.MustNewConstMetric(s.total, prometheus.GaugeValue, float64(SysTotalMemory())/cmd.MB, "Total")
+	ch <- prometheus.MustNewConstMetric(s.free, prometheus.GaugeValue, float64(SysFreeMemory())/cmd.MB, "Free")
+	ch <- prometheus.MustNewConstMetric(s.usage, prometheus.GaugeValue, SysMemoryAverage()/cmd.MB, "Usage")
 }
 
 func SysTotalMemory() uint64 {

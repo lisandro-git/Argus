@@ -32,12 +32,12 @@ var (
 
 func NewCpuUsage() *CpuUsage {
 	return &CpuUsage{
-		CPUser:    prometheus.NewDesc("userland_cpu_usage", "Current system usage of the CPU in userland", []string{"CPU"}, nil),
-		CPNice:    prometheus.NewDesc("userland_cpu_usage_nice", "Current system usage of the CPU in userland with High Priority", []string{"CPU"}, nil),
-		CPSys:     prometheus.NewDesc("kernel_land_cpu_usage", "Current system usage of the CPU in kernel-land", []string{"CPU"}, nil),
-		CPIntr:    prometheus.NewDesc("cpu_interruptions", "Current number of CPU Interruptions", []string{"CPU"}, nil),
-		CPIdle:    prometheus.NewDesc("cpu_idle", "CPU idle time since latest swipe", []string{"CPU"}, nil),
-		CPUStates: prometheus.NewDesc("cpu_states", "CPU states", []string{"CPU"}, nil),
+		CPUser:    prometheus.NewDesc("userland_cpu_usage", "Current system usage of the CPU in userland", []string{"CPUUser"}, nil),
+		CPNice:    prometheus.NewDesc("userland_cpu_usage_nice", "Current system usage of the CPU in userland with High Priority", []string{"CPUNice"}, nil),
+		CPSys:     prometheus.NewDesc("kernel_land_cpu_usage", "Current system usage of the CPU in kernel-land", []string{"CPUSys"}, nil),
+		CPIntr:    prometheus.NewDesc("cpu_interruptions", "Current number of CPU Interruptions", []string{"CPUIntr"}, nil),
+		CPIdle:    prometheus.NewDesc("cpu_idle", "CPU idle time since latest swipe", []string{"CPUIdle"}, nil),
+		CPUStates: prometheus.NewDesc("cpu_states", "CPU states", []string{"CPUStates"}, nil),
 	}
 }
 
