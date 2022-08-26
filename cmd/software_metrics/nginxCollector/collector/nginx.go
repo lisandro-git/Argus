@@ -1,10 +1,10 @@
 package collector
 
 import (
+	"argus/cmd/software_metrics/nginxCollector/client"
 	"log"
 	"sync"
 
-	"github.com/nginxinc/nginx-prometheus-exporter/client"
 	"github.com/prometheus/client_golang/prometheus"
 )
 

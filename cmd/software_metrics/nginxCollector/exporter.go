@@ -1,6 +1,9 @@
-package software_metrics
+package nginxCollector
 
 import (
+	"argus/cmd"
+	"argus/cmd/software_metrics/nginxCollector/client"
+	collector2 "argus/cmd/software_metrics/nginxCollector/collector"
 	"context"
 	"crypto/tls"
 	"crypto/x509"
@@ -18,10 +21,7 @@ import (
 	"syscall"
 	"time"
 
-	"argus/cmd/software_metrics/client"
-	"argus/cmd/software_metrics/collector"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/model"
 )
 
@@ -221,13 +221,12 @@ var (
 	version string
 
 	// Defaults values
-	defaultListenAddress      = getEnv("LISTEN_ADDRESS", ":9113")
+	defaultListenAddress      = getEnv("LISTEN_ADDRESS", ":8080")
 	defaultSecuredMetrics     = getEnvBool("SECURED_METRICS", false)
 	defaultSslServerCert      = getEnv("SSL_SERVER_CERT", "")
 	defaultSslServerKey       = getEnv("SSL_SERVER_KEY", "")
 	defaultMetricsPath        = getEnv("TELEMETRY_PATH", "/metrics")
-	defaultNginxPlus          = getEnvBool("NGINX_PLUS", false)
-	defaultScrapeURI          = getEnv("SCRAPE_URI", "http://127.0.0.1:8080/stub_status")
+	defaultScrapeURI          = getEnv("SCRAPE_URI", "http://127.0.0.1/stub_status")
 	defaultSslVerify          = getEnvBool("SSL_VERIFY", true)
 	defaultSslCaCert          = getEnv("SSL_CA_CERT", "")
 	defaultSslClientCert      = getEnv("SSL_CLIENT_CERT", "")
@@ -290,8 +289,8 @@ For NGINX, the stub_status page must be available through the URI. For NGINX Plu
 		"A comma separated list of constant labels that will be used in every metric. Format is label1=value1,label2=value2... The default value can be overwritten by CONST_LABELS environment variable.")
 )
 
-func main() {
-	flag.Parse()
+func Start() {
+	//flag.Parse()
 
 	commitHash, commitTime, dirtyBuild := getBuildInfo()
 	arch := fmt.Sprintf("%v/%v", runtime.GOOS, runtime.GOARCH)
@@ -304,13 +303,13 @@ func main() {
 
 	log.Printf("Starting...")
 
-	registry := prometheus.NewRegistry()
+	registry := cmd.Registry
 
 	buildInfoMetric := prometheus.NewGauge(
 		prometheus.GaugeOpts{
 			Name: "nginxexporter_build_info",
 			Help: "Exporter build information",
-			ConstLabels: collector.MergeLabels(
+			ConstLabels: collector2.MergeLabels(
 				constLabels.labels,
 				prometheus.Labels{
 					"version": version,
@@ -398,41 +397,22 @@ func main() {
 	if err != nil {
 		log.Fatalf("Could not create Nginx Client: %v", err)
 	}
-	registry.MustRegister(collector.NewNginxCollector(ossClient.(*client.NginxClient), "nginx", constLabels.labels))
+	cmd.RegisterCollector(collector2.NewNginxCollector(ossClient.(*client.NginxClient), "nginxplus", constLabels.labels))
 
-	http.Handle(*metricsPath, promhttp.HandlerFor(registry, promhttp.HandlerOpts{}))
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		_, err := fmt.Fprintf(w, `<!DOCTYPE html>
-			<title>NGINX Exporter</title>
-			<h1>NGINX Exporter</h1>
-			<p><a href=%q>Metrics</a></p>`,
-			*metricsPath)
-		if err != nil {
-			log.Printf("Error while sending a response for the '/' path: %v", err)
-		}
-	})
-
-	listener, err := getListener(*listenAddr)
-	if err != nil {
-		log.Fatalf("Could not create listener: %v", err)
-	}
-
-	if *securedMetrics {
-		_, err = os.Stat(*sslServerCert)
-		if err != nil {
-			log.Fatalf("Cert file is not set, not readable or non-existent. Make sure you set -web.ssl-server-cert when starting your exporter with -web.secured-metrics=true: %v", err)
-		}
-		_, err = os.Stat(*sslServerKey)
-		if err != nil {
-			log.Fatalf("Key file is not set, not readable or non-existent. Make sure you set -web.ssl-server-key when starting your exporter with -web.secured-metrics=true: %v", err)
-		}
-		log.Printf("NGINX Prometheus Exporter has successfully started using https")
-		log.Fatal(srv.ServeTLS(listener, *sslServerCert, *sslServerKey))
-	}
+	//if *securedMetrics {
+	//	_, err = os.Stat(*sslServerCert)
+	//	if err != nil {
+	//		log.Fatalf("Cert file is not set, not readable or non-existent. Make sure you set -web.ssl-server-cert when starting your exporter with -web.secured-metrics=true: %v", err)
+	//	}
+	//	_, err = os.Stat(*sslServerKey)
+	//	if err != nil {
+	//		log.Fatalf("Key file is not set, not readable or non-existent. Make sure you set -web.ssl-server-key when starting your exporter with -web.secured-metrics=true: %v", err)
+	//	}
+	//	log.Printf("NGINX Prometheus Exporter has successfully started using https")
+	//	log.Fatal(srv.ServeTLS(listener, *sslServerCert, *sslServerKey))
+	//}
 
 	log.Printf("NGINX Prometheus Exporter has successfully started")
-	log.Fatal(srv.Serve(listener))
 }
 
 type userAgentRoundTripper struct {
