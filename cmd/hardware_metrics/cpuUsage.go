@@ -7,12 +7,7 @@ import (
 )
 
 type CpuUsage struct {
-	CPUser    *prometheus.Desc
-	CPNice    *prometheus.Desc
-	CPSys     *prometheus.Desc
-	CPIntr    *prometheus.Desc
-	CPIdle    *prometheus.Desc
-	CPUStates *prometheus.Desc
+	CPUValues *prometheus.Desc
 }
 
 var (
@@ -32,30 +27,20 @@ var (
 
 func NewCpuUsage() *CpuUsage {
 	return &CpuUsage{
-		CPUser:    prometheus.NewDesc("userland_cpu_usage", "Current system usage of the CPU in userland", []string{"CPUUser"}, nil),
-		CPNice:    prometheus.NewDesc("userland_cpu_usage_nice", "Current system usage of the CPU in userland with High Priority", []string{"CPUNice"}, nil),
-		CPSys:     prometheus.NewDesc("kernel_land_cpu_usage", "Current system usage of the CPU in kernel-land", []string{"CPUSys"}, nil),
-		CPIntr:    prometheus.NewDesc("cpu_interruptions", "Current number of CPU Interruptions", []string{"CPUIntr"}, nil),
-		CPIdle:    prometheus.NewDesc("cpu_idle", "CPU idle time since latest swipe", []string{"CPUIdle"}, nil),
-		CPUStates: prometheus.NewDesc("cpu_states", "CPU states", []string{"CPUStates"}, nil),
+		CPUValues: prometheus.NewDesc("cpu_metric_value", "Current CPU Values", []string{"cpu_value"}, nil),
 	}
 }
 
 func (c *CpuUsage) Describe(ch chan<- *prometheus.Desc) {
-	ch <- c.CPUser
-	ch <- c.CPNice
-	ch <- c.CPSys
-	ch <- c.CPIntr
-	ch <- c.CPIdle
-	ch <- c.CPUStates
+	ch <- c.CPUValues
 }
 
 func (c *CpuUsage) Collect(ch chan<- prometheus.Metric) {
 	percent, _ := cpu.Percent(time.Second, true)
-	ch <- prometheus.MustNewConstMetric(c.CPUser, prometheus.GaugeValue, percent[CPUser], "CPU")
-	ch <- prometheus.MustNewConstMetric(c.CPNice, prometheus.GaugeValue, percent[CPNice], "CPU")
-	ch <- prometheus.MustNewConstMetric(c.CPSys, prometheus.GaugeValue, percent[CPSys], "CPU")
-	ch <- prometheus.MustNewConstMetric(c.CPIntr, prometheus.GaugeValue, percent[CPIntr], "CPU")
-	ch <- prometheus.MustNewConstMetric(c.CPIdle, prometheus.GaugeValue, percent[CPIdle], "CPU")
-	ch <- prometheus.MustNewConstMetric(c.CPUStates, prometheus.GaugeValue, percent[CPUStates], "CPU")
+	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPUser], "CPUUser")
+	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPNice], "CPUNice")
+	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPSys], "CPUSys")
+	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPIntr], "CPUIntre")
+	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPIdle], "CPUIdle")
+	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPUStates], "CPUStates")
 }
