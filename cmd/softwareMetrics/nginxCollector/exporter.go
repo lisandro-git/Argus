@@ -137,27 +137,6 @@ func parseUnixSocketAddress(address string) (string, string, error) {
 	return unixSocketPath, requestPath, nil
 }
 
-func getListener(listenAddress string) (net.Listener, error) {
-	var listener net.Listener
-	var err error
-
-	if strings.HasPrefix(listenAddress, "unix:") {
-		path, _, pathError := parseUnixSocketAddress(listenAddress)
-		if pathError != nil {
-			return listener, fmt.Errorf("parsing unix domain socket listen address %s failed: %w", listenAddress, pathError)
-		}
-		listener, err = net.ListenUnix("unix", &net.UnixAddr{Name: path, Net: "unix"})
-	} else {
-		listener, err = net.Listen("tcp", listenAddress)
-	}
-
-	if err != nil {
-		return listener, err
-	}
-	log.Printf("Listening on %s", listenAddress)
-	return listener, nil
-}
-
 var (
 	// Set during go build
 	version string
@@ -232,8 +211,6 @@ For NGINX, the stub_status page must be available through the URI. For NGINX Plu
 )
 
 func Start() {
-	//flag.Parse()
-
 	commitHash, commitTime, dirtyBuild := getBuildInfo()
 	arch := fmt.Sprintf("%v/%v", runtime.GOOS, runtime.GOARCH)
 
