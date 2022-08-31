@@ -1,14 +1,35 @@
 package networkMetrics
 
 import (
-	"argus/cmd"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
 	"net"
 	"os"
 	"time"
 
 	"github.com/digineo/go-ping"
 )
+
+type NetworkClient struct {
+	networkLatency *prometheus.Desc
+}
+
+func NewNetworkClient() *NetworkClient {
+	return &NetworkClient{
+		networkLatency: prometheus.NewDesc("network_latency", "Network latency", []string{"host"}, nil),
+	}
+}
+
+func (n *NetworkClient) Describe(ch chan<- *prometheus.Desc) {
+	ch <- n.networkLatency
+}
+
+func (n *NetworkClient) Collect(ch chan<- prometheus.Metric) {
+	for _, host := range Hosts {
+		var _, latency = PingClient(true, false, host)
+		ch <- prometheus.MustNewConstMetric(n.networkLatency, prometheus.GaugeValue, (float64(latency.Microseconds()) / 1000.0), host)
+	}
+}
 
 var (
 	attempts       uint = 3
@@ -20,7 +41,6 @@ var (
 	remoteAddr     *net.IPAddr
 	pinger         *ping.Pinger
 )
-var networkLatency = cmd.NewGaugeVec("network_latency", "Current network latency.", []string{"Latency"})
 
 func PingClient(proto4, proto6 bool, host string) (*net.IPAddr, time.Duration) {
 	var network string
