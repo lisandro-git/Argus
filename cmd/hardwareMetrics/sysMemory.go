@@ -7,29 +7,23 @@ import (
 )
 
 type SysMemory struct {
-	total *prometheus.Desc
-	free  *prometheus.Desc
-	usage *prometheus.Desc
+	ram *prometheus.Desc
 }
 
 func NewSysMemory() *SysMemory {
 	return &SysMemory{
-		total: prometheus.NewDesc("sys_memory_total", "Total system memory.", []string{"RAM"}, nil),
-		free:  prometheus.NewDesc("sys_memory_free", "Free system memory.", []string{"RAM"}, nil),
-		usage: prometheus.NewDesc("sys_memory_usage", "Current system memory usage.", []string{"RAM"}, nil),
+		ram: prometheus.NewDesc("sys_memory", "Total system memory.", []string{"ram_usage"}, nil),
 	}
 }
 
 func (s *SysMemory) Describe(ch chan<- *prometheus.Desc) {
-	ch <- s.total
-	ch <- s.free
-	ch <- s.usage
+	ch <- s.ram
 }
 
 func (s *SysMemory) Collect(ch chan<- prometheus.Metric) {
-	ch <- prometheus.MustNewConstMetric(s.total, prometheus.GaugeValue, float64(SysTotalMemory())/cmd.MB, "Total")
-	ch <- prometheus.MustNewConstMetric(s.free, prometheus.GaugeValue, float64(SysFreeMemory())/cmd.MB, "Free")
-	ch <- prometheus.MustNewConstMetric(s.usage, prometheus.GaugeValue, SysMemoryAverage()/cmd.MB, "Usage")
+	ch <- prometheus.MustNewConstMetric(s.ram, prometheus.GaugeValue, float64(SysTotalMemory())/cmd.MB, "Total")
+	ch <- prometheus.MustNewConstMetric(s.ram, prometheus.GaugeValue, float64(SysFreeMemory())/cmd.MB, "Free")
+	ch <- prometheus.MustNewConstMetric(s.ram, prometheus.GaugeValue, float64(SysMemoryUsage())/cmd.MB, "Usage")
 }
 
 func SysTotalMemory() uint64 {
@@ -56,6 +50,10 @@ func SysFreeMemory() uint64 {
 	return uint64(in.Freeram) * uint64(in.Unit)
 }
 
-func SysMemoryAverage() float64 {
-	return ((float64(SysFreeMemory()) / (1024 * 1024 * 1024)) / (float64(SysTotalMemory()) / (1024 * 1024 * 1024)) * 100)
+func SysMemoryAverage() float64 { // lisandro : remove this func ?
+	return ((float64(SysFreeMemory()) / cmd.MB) / (float64(SysTotalMemory()) / cmd.MB) * 100)
+}
+
+func SysMemoryUsage() float64 {
+	return float64(SysTotalMemory()) - float64(SysFreeMemory())
 }
