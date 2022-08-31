@@ -2,6 +2,7 @@ package networkMetrics
 
 import (
 	"fmt"
+	ps "github.com/kotakanbe/go-pingscanner"
 	"github.com/prometheus/client_golang/prometheus"
 	"net"
 	"os"
@@ -9,27 +10,6 @@ import (
 
 	"github.com/digineo/go-ping"
 )
-
-type NetworkClient struct {
-	networkLatency *prometheus.Desc
-}
-
-func NewNetworkClient() *NetworkClient {
-	return &NetworkClient{
-		networkLatency: prometheus.NewDesc("network_latency", "Network latency", []string{"host"}, nil),
-	}
-}
-
-func (n *NetworkClient) Describe(ch chan<- *prometheus.Desc) {
-	ch <- n.networkLatency
-}
-
-func (n *NetworkClient) Collect(ch chan<- prometheus.Metric) {
-	for _, host := range Hosts {
-		var _, latency = PingClient(true, false, host)
-		ch <- prometheus.MustNewConstMetric(n.networkLatency, prometheus.GaugeValue, (float64(latency.Microseconds()) / 1000.0), host)
-	}
-}
 
 var (
 	attempts       uint = 3
@@ -42,7 +22,32 @@ var (
 	pinger         *ping.Pinger
 )
 
-func PingClient(proto4, proto6 bool, host string) (*net.IPAddr, time.Duration) {
+type NetworkClient struct {
+	networkLatency *prometheus.Desc
+	//connectedClient *prometheus.Desc
+}
+
+func NewNetworkClient() *NetworkClient {
+	return &NetworkClient{
+		networkLatency: prometheus.NewDesc("network_latency", "Network latency", []string{"host"}, nil),
+		//connectedClient: prometheus.NewDesc("connected_client", "Number of connected clients", []string{"host"}, nil),
+	}
+}
+
+func (n *NetworkClient) Describe(ch chan<- *prometheus.Desc) {
+	ch <- n.networkLatency
+	//ch <- n.connectedClient
+}
+
+func (n *NetworkClient) Collect(ch chan<- prometheus.Metric) {
+	for _, host := range Hosts {
+		var _, latency = pingClient(true, false, host)
+		ch <- prometheus.MustNewConstMetric(n.networkLatency, prometheus.GaugeValue, (float64(latency.Microseconds()) / 1000.0), host)
+	}
+	//ch <- prometheus.MustNewConstMetric(n.connectedClient, prometheus.GaugeValue, float64(getConnectedClient()), "connectedClient")
+}
+
+func pingClient(proto4, proto6 bool, host string) (*net.IPAddr, time.Duration) {
 	var network string
 	if bind == "" {
 		if proto4 {
@@ -84,4 +89,20 @@ func unicastPing() (*net.IPAddr, time.Duration) {
 		os.Exit(1)
 	}
 	return remoteAddr, rtt
+}
+
+func getConnectedClient() int {
+	scanner := ps.PingScanner{
+		CIDR: SUBNET,
+		PingOptions: []string{
+			"-c1",
+			"-t1",
+		},
+		NumOfConcurrency: 254,
+	}
+	aliveIPs, err := scanner.Scan()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return len(aliveIPs)
 }
