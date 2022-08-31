@@ -33,9 +33,9 @@ func (u *Uptime) Describe(ch chan<- *prometheus.Desc) {
 
 func (u *Uptime) Collect(ch chan<- prometheus.Metric) {
 	totalUptime := Getuptime()
-	ch <- prometheus.MustNewConstMetric(u.Days, prometheus.GaugeValue, totalUptime[Days], "Days")
-	ch <- prometheus.MustNewConstMetric(u.Hours, prometheus.GaugeValue, totalUptime[Hours], "Hours")
-	ch <- prometheus.MustNewConstMetric(u.Minutes, prometheus.GaugeValue, totalUptime[Minutes], "Minutes")
+	ch <- prometheus.MustNewConstMetric(u.Days, prometheus.CounterValue, totalUptime[Days], "Days")
+	ch <- prometheus.MustNewConstMetric(u.Hours, prometheus.CounterValue, totalUptime[Hours], "Hours")
+	ch <- prometheus.MustNewConstMetric(u.Minutes, prometheus.CounterValue, totalUptime[Minutes], "Minutes")
 }
 
 func Getuptime() []float64 {

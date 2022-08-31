@@ -5,13 +5,18 @@ import (
 	"github.com/ricochet2200/go-disk-usage/du"
 )
 
+var path = []string{
+	"/",
+	"/mnt",
+}
+
 type DiskSize struct {
 	root *prometheus.Desc
 }
 
 func NewDiskSize() *DiskSize {
 	return &DiskSize{
-		root: prometheus.NewDesc("hdd_size", "Current size of the entire disk.", []string{"Path"}, nil),
+		root: prometheus.NewDesc("hdd_size", "Current size of the disk.", []string{"Path"}, nil),
 	}
 }
 
@@ -20,7 +25,9 @@ func (d *DiskSize) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (d *DiskSize) Collect(ch chan<- prometheus.Metric) {
-	ch <- prometheus.MustNewConstMetric(d.root, prometheus.GaugeValue, GetDiskSize("/"), "/")
+	for _, p := range path {
+		ch <- prometheus.MustNewConstMetric(d.root, prometheus.GaugeValue, GetDiskSize(p), p)
+	}
 }
 
 func GetDiskSize(path string) float64 {
