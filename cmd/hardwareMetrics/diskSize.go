@@ -1,35 +1,38 @@
 package hardwareMetrics
 
 import (
+	"argus/cmd"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/ricochet2200/go-disk-usage/du"
+	"github.com/shirou/gopsutil/disk"
 )
 
-var path = []string{
-	"/",
-	"/mnt",
-}
-
 type DiskSize struct {
-	root *prometheus.Desc
+	total *prometheus.Desc
 }
 
 func NewDiskSize() *DiskSize {
 	return &DiskSize{
-		root: prometheus.NewDesc("hdd_size", "Current size of the disk.", []string{"Path"}, nil),
+		total: prometheus.NewDesc("hdd_size", "Size of a partition given a path and a usage (total, Usage...)", []string{"Path", "Usage"}, nil),
 	}
 }
 
 func (d *DiskSize) Describe(ch chan<- *prometheus.Desc) {
-	ch <- d.root
+	ch <- d.total
 }
 
 func (d *DiskSize) Collect(ch chan<- prometheus.Metric) {
-	for _, p := range path {
-		ch <- prometheus.MustNewConstMetric(d.root, prometheus.GaugeValue, GetDiskSize(p), p)
-	}
-}
+	parts, _ := disk.Partitions(true)
+	for _, p := range parts {
+		device := p.Mountpoint
+		s, _ := disk.Usage(device)
+		if s.Total == 0 {
+			continue
+		}
 
-func GetDiskSize(path string) float64 {
-	return float64(du.NewDiskUsage(path).Usage()) * 100
+		ch <- prometheus.MustNewConstMetric(d.total, prometheus.GaugeValue, float64(s.Total)/cmd.GB, s.Path, "total")
+		ch <- prometheus.MustNewConstMetric(d.total, prometheus.GaugeValue, float64(s.Free)/cmd.GB, s.Path, "Free")
+		ch <- prometheus.MustNewConstMetric(d.total, prometheus.GaugeValue, float64(s.Used)/cmd.GB, s.Path, "Used")
+		ch <- prometheus.MustNewConstMetric(d.total, prometheus.GaugeValue, s.UsedPercent, s.Path, "Percentage")
+
+	}
 }
