@@ -45,7 +45,7 @@ func (c *CpuUsage) Collect(ch chan<- prometheus.Metric) {
 	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPIntr], "CPUIntre")
 	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPIdle], "CPUIdle")
 	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPUStates], "CPUStates")
-	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, cpuTemp(), "CPUTemp")
+	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.CounterValue, cpuTemp(), "CPUTemp")
 }
 
 func cpuTemp() float64 {

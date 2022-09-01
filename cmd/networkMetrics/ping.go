@@ -44,7 +44,7 @@ func (n *NetworkClient) Collect(ch chan<- prometheus.Metric) {
 		var _, latency = pingClient(true, false, host)
 		ch <- prometheus.MustNewConstMetric(n.networkLatency, prometheus.GaugeValue, (float64(latency.Microseconds()) / 1000.0), host)
 	}
-	//ch <- prometheus.MustNewConstMetric(n.connectedClient, prometheus.GaugeValue, float64(getConnectedClient()), "connectedClient")
+	//ch <- prometheus.MustNewConstMetric(n.connectedClient, prometheus.CounterValue, float64(getConnectedClient()), "connectedClient")
 }
 
 func pingClient(proto4, proto6 bool, host string) (*net.IPAddr, time.Duration) {
