@@ -3,6 +3,8 @@ package hardwareMetrics
 import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/shirou/gopsutil/cpu"
+	"io/ioutil"
+	"strconv"
 	"time"
 )
 
@@ -43,4 +45,18 @@ func (c *CpuUsage) Collect(ch chan<- prometheus.Metric) {
 	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPIntr], "CPUIntre")
 	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPIdle], "CPUIdle")
 	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, percent[CPUStates], "CPUStates")
+	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.GaugeValue, cpuTemp(), "CPUTemp")
+}
+
+func cpuTemp() float64 {
+	temp, err := ioutil.ReadFile("/sys/class/thermal/thermal_zone0/temp")
+	if err != nil {
+		return 0.0
+	}
+
+	y, err := strconv.Atoi(string(temp)[:len(string(temp))-1])
+	if err != nil {
+		return 0.0
+	}
+	return float64(y) / 1000
 }
