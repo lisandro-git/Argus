@@ -3,12 +3,11 @@ module argus
 go 1.18
 
 require (
+	code.gitea.io/sdk/gitea v0.15.1
 	github.com/digineo/go-ping v1.0.1
 	github.com/kotakanbe/go-pingscanner v0.1.0
-	github.com/nginxinc/nginx-plus-go-client v0.10.0
 	github.com/prometheus/client_golang v1.12.2
 	github.com/prometheus/common v0.32.1
-	github.com/ricochet2200/go-disk-usage/du v0.0.0-20210707232629-ac9918953285
 	github.com/shirou/gopsutil v3.21.11+incompatible
 )
 
@@ -18,6 +17,7 @@ require (
 	github.com/digineo/go-logwrap v0.0.0-20181106161722-a178c58ea3f0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/hashicorp/go-version v1.2.1 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect

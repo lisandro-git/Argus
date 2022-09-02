@@ -24,11 +24,12 @@
 | **Usage**  | Memory Used           | Gauge    | Bytes    |
 
 ### Disk
-| **Metric** | **Description** | **Type** | **Unit** |
-|------------|-----------------|----------|----------|
-| **Total**  | Total disk      | Gauge    | Bytes    |
-| **Free**   | Free disk       | Gauge    | Bytes    |
-| **Usage**  | Disk Used       | Gauge    | Bytes    | # todo
+| **Metric**      | **Description** | **Type** | **Unit** |
+|-----------------|-----------------|----------|----------|
+| **Total**       | Total disk      | Gauge    | Bytes    |
+| **Free**        | Free disk       | Gauge    | Bytes    |
+| **Usage**       | Disk Used       | Gauge    | Bytes    |
+| **Percentage ** | Disk Percentage | Gauge    | Bytes    |
 
 ---
 ## Network Metrics
