@@ -280,7 +280,7 @@ func Start() {
 	if err != nil {
 		log.Fatalf("Could not create Nginx Client: %v", err)
 	}
-	cmd.RegisterCollector(collector.NewNginxCollector(ossClient.(*client.NginxClient), "nginxplus", constLabels.labels))
+	cmd.RegisterCollector(collector.NewNginxCollector(ossClient.(*client.NginxClient), "nginx", constLabels.labels))
 
 	//if *securedMetrics {
 	//	_, err = os.Stat(*sslServerCert)
