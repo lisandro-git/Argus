@@ -44,23 +44,23 @@
 
 ---
 ## Network Metrics
-| **Metric**           | **Description**  | **Type** | **Unit** |
-|----------------------|------------------|----------|----------|
-| **networkLatency**   | networkLatency   | Gauge    | ms       |
-| **connectedClients** | connectedClients | Gauge    | Count    |
+| **Metric**           | **Description**            | **Type** | **Unit** |
+|----------------------|----------------------------|----------|----------|
+| **networkLatency**   | Network latency            | Gauge    | ms       |
+| **connectedClients** | Connected client on subnet | Gauge    | Count    |
 
 ---
 ## Software Metrics
 ### Nginx
-| **Metric** | **Description** | **Type** | **Unit** |
-|------------|-----------------|----------|----------|
-| **Active** | Active          | Gauge    | Count    |
-| **Accepts**| Accepts         | Gauge    | Count    |
-| **Handled**| Handled         | Gauge    | Count    |
-| **Reading**| Reading         | Gauge    | Count    |
-| **Writing**| Writing         | Gauge    | Count    |
-| **Waiting**| Waiting         | Gauge    | Count    |
-| **Total**  | Total           | Gauge    | Count    |
+| **Metric** | **Description**         | **Type** | **Unit** |
+|------------|-------------------------|----------|----------|
+| **Active** | Active Connections      | Gauge    | Count    |
+| **Accepts**| Connection Accepted     | Gauge    | Count    |
+| **Handled**| Connection Handled      | Gauge    | Count    |
+| **Reading**| Request Headers read    | Gauge    | Count    |
+| **Writing**| Response back to client | Gauge    | Count    |
+| **Waiting**| Idle client connection  | Gauge    | Count    |
+| **Total**  | Total Http requests     | Gauge    | Count    |
 
 ### Gitea
 | **Metric**           | **Description**                          | **Type** | **Unit** |
@@ -73,5 +73,5 @@
 ### Uptime
 | **Metric** | **Description** | **Type** | **Unit** |
 |------------|-----------------|----------|----------|
-| **Uptime** | Uptime          | Gauge    | Count    |
+| **Uptime** | System Uptime   | Gauge    | Count    |
 ---
