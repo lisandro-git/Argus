@@ -1,6 +1,17 @@
 # Current Grafana Dashboard
 ![grafana_dashboard](img/grafana_dashboard.png)
 ---
+
+# Table of Contents
+- [Current Grafana Dashboard](#current-grafana-dashboard)
+- [Table of Contents](#table-of-contents)
+- [Metrics Collected](#metrics-collected)
+- - [Hardware Metrics](#Hardware Metrics)
+- - [Network Metrics](#network-metrics)
+- - [Software Metrics](#software-metrics)
+- - [Operating System Metrics](#OS Metrics)
+
+---
 # Metrics collected
 
 ---
