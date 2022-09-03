@@ -3,19 +3,24 @@ package main
 import (
 	"argus/cmd"
 	hm "argus/cmd/hardwareMetrics"
-	"argus/cmd/networkMetrics"
 	om "argus/cmd/osMetrics"
 	sm "argus/cmd/softwareMetrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
+	"net"
 	"net/http"
-	"os"
 	"sync"
 )
 
 var wg sync.WaitGroup
 
-func server() {
+var (
+	TYPE = "tcp4"
+	ADDR = ""
+	PORT = "8080"
+)
+
+func startListener() {
 	h := promhttp.HandlerFor(cmd.Gatherer, promhttp.HandlerOpts{
 		ErrorHandling: promhttp.ContinueOnError,
 		Registry:      cmd.Registry,
@@ -23,22 +28,26 @@ func server() {
 
 	var handler http.Handler = promhttp.InstrumentMetricHandler(cmd.Registry, h)
 
-	http.Handle("/metrics", handler)
-	if err := http.ListenAndServe(":8080", handler); err != nil {
-		log.Printf("Error occur when start server %v", err)
-		os.Exit(1)
+	server := &http.Server{Handler: handler}
+	l, err := net.Listen(TYPE, ADDR+":"+PORT)
+	if err != nil {
+		log.Fatal(err)
 	}
+	http.Handle("/", handler)
+	http.Handle("/metrics", handler)
+
+	err = server.Serve(l)
 }
 
 func main() {
 	hm.RegisterMetrics()
 	om.RegisterMetrics()
 	sm.RegisterMetrics()
-	networkMetrics.RegisterMetrics()
+	//networkMetrics.RegisterMetrics()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		server()
+		startListener()
 	}()
 	wg.Wait()
 }
