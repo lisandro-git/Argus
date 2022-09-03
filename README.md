@@ -9,8 +9,8 @@
 - - [Hardware Metrics](#hardware-metrics)
 - - [Network Metrics](#network-metrics)
 - - [Software Metrics](#software-metrics)
-- - - [Nginx](#Nginx)
-- - - [Gitea](#Gitea)
+- - - [Nginx Metrics](#nginx-metrics)
+- - - [Gitea Metrics](#gitea-metrics)
 - - [Operating System Metrics](#os-metrics)
 
 ---
