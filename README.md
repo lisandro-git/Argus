@@ -9,10 +9,18 @@
 - - [Hardware Metrics](#hardware-metrics)
 - - [Network Metrics](#network-metrics)
 - - [Software Metrics](#software-metrics)
+- - - [Nginx](#Nginx)
+- - - [Gitea](#Gitea)
 - - [Operating System Metrics](#os-metrics)
 
 ---
 # Metrics collected
+| Metric                   | Description                           |
+|--------------------------|---------------------------------------|
+| Hardware Metrics         | Data related to all hardware devices  |
+| Network Metrics          | Data related to all network devices   |
+| Software Metrics         | Data related to all software packages |
+| Operating System Metrics | Data related to the operating system  |
 
 ---
 ## Hardware Metrics
