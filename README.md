@@ -10,7 +10,6 @@
 - - [Network Metrics](#network-metrics)
 - - [Software Metrics](#software-metrics)
 - - - [Nginx Metrics](#nginx-metrics)
-- - - [Gitea Metrics](#gitea-metrics)
 - - [Operating System Metrics](#os-metrics)
 
 ---
