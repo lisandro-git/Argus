@@ -51,6 +51,12 @@
 | **Waiting**| Waiting         | Gauge    | Count    |
 | **Total**  | Total           | Gauge    | Count    |
 
+### Gitea
+| **Metric**           | **Description**                          | **Type** | **Unit** |
+|----------------------|------------------------------------------|----------|----------|
+| **Active**           | Active                                   | Gauge    | Count    |
+| **gitea_repository** | Gitea Repository (email, name, owner...) | %        | %        |
+
 ---
 ## OS Metrics
 ### Uptime
