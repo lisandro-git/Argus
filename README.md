@@ -73,9 +73,12 @@
 ### Gitea
 | **Metric**           | **Description**                          | **Type** | **Unit** |
 |----------------------|------------------------------------------|----------|----------|
-| **Active**           | Active                                   | Gauge    | Count    |
-| **gitea_repository** | Gitea Repository (email, name, owner...) | %        | %        |
-
+| **Active**           | If the Gitea service is up on the device | Gauge    | Count    |
+| **gitea_repository** | ID                                       | label    | %        |
+| **gitea_repository** | Email                                    | label    | %        |
+| **gitea_repository** | Name                                     | label    | %        |
+| **gitea_repository** | Owner                                    | label    | %        |
+| **gitea_repository** | RepoSize                                 | label    | %        |
 ---
 ## OS Metrics
 ### Uptime
