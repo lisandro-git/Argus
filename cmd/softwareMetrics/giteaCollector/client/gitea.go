@@ -16,11 +16,11 @@ type ParsedRepos struct {
 	Updated  time.Time
 }
 
-func GetRepos(client *gitea.Client) *[]ParsedRepos {
+func GetRepos(client *gitea.Client) (*[]ParsedRepos, float64) {
 	var parsedRepo []ParsedRepos
 	result, _, err := client.ListMyRepos(gitea.ListReposOptions{})
 	if err != nil {
-		return &parsedRepo
+		return &parsedRepo, 0.0
 	}
 	for _, x := range result {
 		parsedRepo = append(parsedRepo, ParsedRepos{
@@ -33,7 +33,7 @@ func GetRepos(client *gitea.Client) *[]ParsedRepos {
 			Created:  x.Created,
 		})
 	}
-	return &parsedRepo
+	return &parsedRepo, float64(len(parsedRepo))
 }
 
 func GetRepoCount(client *gitea.Client) int {
