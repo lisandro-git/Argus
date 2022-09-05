@@ -2,7 +2,7 @@ package giteaCollector
 
 import (
 	"argus/cmd"
-	"argus/cmd/softwareMetrics/giteaCollector/collector"
+	"argus/cmd/webMetrics/giteaCollector/collector"
 )
 
 func Start() {

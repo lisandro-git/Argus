@@ -6,6 +6,7 @@ import (
 	nm "argus/cmd/networkMetrics"
 	om "argus/cmd/osMetrics"
 	sm "argus/cmd/softwareMetrics"
+	wm "argus/cmd/webMetrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net"
@@ -45,6 +46,7 @@ func main() {
 	om.RegisterMetrics()
 	sm.RegisterMetrics()
 	nm.RegisterMetrics()
+	wm.RegisterMetrics()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()

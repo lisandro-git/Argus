@@ -2,7 +2,7 @@ package collector
 
 import (
 	"argus/cmd"
-	"argus/cmd/softwareMetrics/giteaCollector/client"
+	"argus/cmd/webMetrics/giteaCollector/client"
 	"code.gitea.io/sdk/gitea"
 	"github.com/prometheus/client_golang/prometheus"
 	"strconv"
