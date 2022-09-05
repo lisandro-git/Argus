@@ -11,6 +11,7 @@
 - - [Software Metrics](#software-metrics)
 - - - [Nginx Metrics](#nginx)
 - - - [Gitea Metrics](#gitea)
+- - - [GitHub Metrics](#github)
 - - [Operating System Metrics](#os-metrics)
 
 ---
@@ -60,25 +61,41 @@
 ---
 ## Software Metrics
 ### Nginx
-| **Metric** | **Description**         | **Type** | **Unit** |
-|------------|-------------------------|----------|----------|
-| **Active** | Active Connections      | Gauge    | Count    |
-| **Accepts**| Connection Accepted     | Gauge    | Count    |
-| **Handled**| Connection Handled      | Gauge    | Count    |
-| **Reading**| Request Headers read    | Gauge    | Count    |
-| **Writing**| Response back to client | Gauge    | Count    |
-| **Waiting**| Idle client connection  | Gauge    | Count    |
-| **Total**  | Total Http requests     | Gauge    | Count    |
+| **Metric**  | **Description**         | **Type** | **Unit** |
+|-------------|-------------------------|----------|----------|
+| **Active**  | Active Connections      | Gauge    | Count    |
+| **Accepts** | Connection Accepted     | Gauge    | Count    |
+| **Handled** | Connection Handled      | Gauge    | Count    |
+| **Reading** | Request Headers read    | Gauge    | Count    |
+| **Writing** | Response back to client | Gauge    | Count    |
+| **Waiting** | Idle client connection  | Gauge    | Count    |
+| **Total**   | Total Http requests     | Gauge    | Count    |
 
 ### Gitea
-| **Metric**           | **Description**                          | **Type** | **Unit** |
-|----------------------|------------------------------------------|----------|----------|
-| **Active**           | If the Gitea service is up on the device | Gauge    | Count    |
-| **gitea_repository** | ID                                       | label    | %        |
-| **gitea_repository** | Email                                    | label    | %        |
-| **gitea_repository** | Name                                     | label    | %        |
-| **gitea_repository** | Owner                                    | label    | %        |
-| **gitea_repository** | RepoSize                                 | label    | %        |
+| **Metric**   | **Description**                 | **Type** | **Unit** |
+|--------------|---------------------------------|----------|----------|
+| **Active**   | State of the Gitea service      | Gauge    | Count    |
+| **ID**       | ID of the repository            | label    | %        |
+| **Name**     | Name of the repo                | label    | %        |
+| **Owner**    | Owner of the current repository | label    | %        |
+| **Email**    | Email of the owner of the repo  | label    | %        |
+| **RepoSize** | Size of the repository          | label    | %        |
+
+### Github
+| **Metric**        | **Description**            | **Type** | **Unit** |
+|-------------------|----------------------------|----------|----------|
+| **ID**            | ID of the repo             | label    | %        |
+| **Name**          | Name of the repo           | label    | %        |
+| **Owner**         | Owner of the current repo  | label    | %        |
+| **RepoSize**      | Size of the repo           | label    | %        |
+| **DefaultBranch** | Default branch of the repo | label    | %        |
+| **CloneUrl**      | Url to clone the repo      | label    | %        |
+| **Language**      | Main language of the repo  | label    | %        |
+| **Description**   | Description of the repo    | label    | %        |
+| **Visibility**    | Visibility of the repo     | label    | %        |
+| **CreationDate**  | Creation date of the repo  | label    | %        |
+| **LastUpdate**    | Last update of the repo    | label    | %        |
+
 ---
 ## OS Metrics
 ### Uptime
