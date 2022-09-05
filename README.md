@@ -49,7 +49,7 @@
 | **Total**       | Total disk      | Gauge    | Bytes    |
 | **Free**        | Free disk       | Gauge    | Bytes    |
 | **Usage**       | Disk Used       | Gauge    | Bytes    |
-| **Percentage ** | Disk Percentage | Gauge    | Bytes    |
+| **Percentage** | Disk Percentage | Gauge    | Bytes    |
 
 ---
 ## Network Metrics
