@@ -55,7 +55,7 @@ func (g *gCollector) Collect(ch chan<- prometheus.Metric) {
 	for _, repo := range *g.client {
 		ch <- prometheus.MustNewConstMetric(g.metrics["Repository"],
 			prometheus.CounterValue,
-			0,
+			1,
 			strconv.Itoa(int(repo.ID)),
 			repo.Name,
 			repo.Owner,
