@@ -50,10 +50,6 @@ func SysFreeMemory() uint64 {
 	return uint64(in.Freeram) * uint64(in.Unit)
 }
 
-func SysMemoryAverage() float64 { // lisandro : remove this func ?
-	return ((float64(SysFreeMemory()) / cmd.MB) / (float64(SysTotalMemory()) / cmd.MB) * 100)
-}
-
 func SysMemoryUsage() float64 {
 	return float64(SysTotalMemory()) - float64(SysFreeMemory())
 }

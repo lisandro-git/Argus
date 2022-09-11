@@ -31,14 +31,14 @@ func startListener() {
 	var handler http.Handler = promhttp.InstrumentMetricHandler(cmd.Registry, h)
 
 	server := &http.Server{Handler: handler}
-	l, err := net.Listen(TYPE, ADDR+":"+PORT)
+	listener, err := net.Listen(TYPE, ADDR+":"+PORT)
 	if err != nil {
 		log.Fatal(err)
 	}
 	http.Handle("/", handler)
 	http.Handle("/metrics", handler)
 
-	err = server.Serve(l)
+	err = server.Serve(listener)
 }
 
 func main() {
@@ -47,7 +47,11 @@ func main() {
 	sm.RegisterMetrics()
 	nm.RegisterMetrics()
 	wm.RegisterMetrics()
-	wg.Add(1)
+
+	wg.Add(2)
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 	go func() {
 		defer wg.Done()
 		startListener()
