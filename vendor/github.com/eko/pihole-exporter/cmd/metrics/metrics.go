@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
-	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -176,29 +175,3 @@ var (
 		[]string{"hostname"},
 	)
 )
-
-// Init initializes all Prometheus metrics made available by PI-Hole exporter.
-func Init() {
-	initMetric("domains_blocked", DomainsBlocked)
-	initMetric("dns_queries_today", DNSQueriesToday)
-	initMetric("ads_blocked_today", AdsBlockedToday)
-	initMetric("ads_percentag_today", AdsPercentageToday)
-	initMetric("unique_domains", UniqueDomains)
-	initMetric("queries_forwarded", QueriesForwarded)
-	initMetric("queries_cached", QueriesCached)
-	initMetric("clients_ever_seen", ClientsEverSeen)
-	initMetric("unique_clients", UniqueClients)
-	initMetric("dns_queries_all_types", DNSQueriesAllTypes)
-	initMetric("reply", Reply)
-	initMetric("top_queries", TopQueries)
-	initMetric("top_ads", TopAds)
-	initMetric("top_sources", TopSources)
-	initMetric("forward_destinations", ForwardDestinations)
-	initMetric("querytypes", QueryTypes)
-	initMetric("status", Status)
-}
-
-func initMetric(name string, metric *prometheus.GaugeVec) {
-	prometheus.MustRegister(metric)
-	log.Info("New Prometheus metric registered: ", name)
-}

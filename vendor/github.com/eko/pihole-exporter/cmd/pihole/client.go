@@ -83,7 +83,7 @@ func (c *Client) String() string {
 	return c.config.PIHoleHostname
 }
 
-func (c *Client) CollectMetricsAsync(writer http.ResponseWriter, request *http.Request) {
+func (c *Client) CollectMetricsAsync() {
 	log.Printf("Collecting from %s", c.config.PIHoleHostname)
 	if stats, err := c.getStatistics(); err == nil {
 		c.setMetrics(stats)

@@ -2,6 +2,7 @@ package hardwareMetrics
 
 import (
 	"argus/cmd"
+	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/shirou/gopsutil/disk"
 )
@@ -24,8 +25,9 @@ func (d *DiskSize) Collect(ch chan<- prometheus.Metric) {
 	parts, _ := disk.Partitions(true)
 	for _, p := range parts {
 		device := p.Mountpoint
-		s, _ := disk.Usage(device)
-		if s.Total == 0 {
+		s, err := disk.Usage(device)
+		if err != nil || s.Total == 0 {
+			_ = fmt.Errorf("Error getting disk usage for %s: %s", device, err)
 			continue
 		}
 
