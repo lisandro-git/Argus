@@ -5,10 +5,9 @@ import (
 	"github.com/shirou/gopsutil/host"
 )
 
+// Uptime is a struct that contains the uptime of the system
 type Uptime struct {
-	Days    *prometheus.Desc
-	Hours   *prometheus.Desc
-	Minutes *prometheus.Desc
+	Time *prometheus.Desc
 }
 
 var (
@@ -17,27 +16,25 @@ var (
 	Minutes = 2
 )
 
+// NewUptime returns a new Uptime collector
 func NewUptime() *Uptime {
 	return &Uptime{
-		Days:    prometheus.NewDesc("uptime_days", "Current uptime of the system.", []string{"Time"}, nil),
-		Hours:   prometheus.NewDesc("uptime_hours", "Current uptime of the system.", []string{"Time"}, nil),
-		Minutes: prometheus.NewDesc("uptime_minutes", "Current uptime of the system.", []string{"Time"}, nil),
+		Time: prometheus.NewDesc("uptime", "Uptime of the system", []string{"uptime"}, nil),
 	}
 }
 
 func (u *Uptime) Describe(ch chan<- *prometheus.Desc) {
-	ch <- u.Days
-	ch <- u.Hours
-	ch <- u.Minutes
+	ch <- u.Time
 }
 
 func (u *Uptime) Collect(ch chan<- prometheus.Metric) {
 	totalUptime := Getuptime()
-	ch <- prometheus.MustNewConstMetric(u.Days, prometheus.CounterValue, totalUptime[Days], "Days")
-	ch <- prometheus.MustNewConstMetric(u.Hours, prometheus.CounterValue, totalUptime[Hours], "Hours")
-	ch <- prometheus.MustNewConstMetric(u.Minutes, prometheus.CounterValue, totalUptime[Minutes], "Minutes")
+	ch <- prometheus.MustNewConstMetric(u.Time, prometheus.CounterValue, totalUptime[Days], "Days")
+	ch <- prometheus.MustNewConstMetric(u.Time, prometheus.CounterValue, totalUptime[Hours], "Hours")
+	ch <- prometheus.MustNewConstMetric(u.Time, prometheus.CounterValue, totalUptime[Minutes], "Minutes")
 }
 
+// Getuptime returns the uptime of the system
 func Getuptime() []float64 {
 	os_uptime, _ := host.Uptime()
 
