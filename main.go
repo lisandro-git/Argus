@@ -7,6 +7,7 @@ import (
 	om "argus/cmd/osMetrics"
 	sm "argus/cmd/softwareMetrics"
 	wm "argus/cmd/webMetrics"
+	"fmt"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net"
@@ -32,6 +33,7 @@ func startListener() {
 
 	server := &http.Server{Handler: handler}
 	listener, err := net.Listen(TYPE, ADDR+":"+PORT)
+	fmt.Println("Listening on " + ADDR + ":" + PORT)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,10 +50,7 @@ func main() {
 	nm.RegisterMetrics()
 	wm.RegisterMetrics()
 
-	wg.Add(2)
-	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
+	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		startListener()

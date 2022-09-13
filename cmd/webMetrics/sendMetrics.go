@@ -1,13 +1,9 @@
 package softwareMetrics
 
-import (
-	"argus/cmd/webMetrics/giteaCollector"
-	"argus/cmd/webMetrics/githubCollector"
-	"argus/cmd/webMetrics/piholeCollector"
-)
+import "argus/cmd/webMetrics/githubCollector"
 
 func RegisterMetrics() {
-	giteaCollector.Start()
+	//giteaCollector.Start()
 	githubCollector.Start()
-	piholeCollector.S()
+	//piholeCollector.S()
 }

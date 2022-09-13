@@ -207,7 +207,7 @@ For NGINX, the stub_status page must be available through the URI. For NGINX Plu
 )
 
 func Start() {
-	log.Printf("Starting...")
+	//log.Printf("Starting...")
 
 	// #nosec G402
 	sslConfig := &tls.Config{InsecureSkipVerify: !*sslVerify}
@@ -295,7 +295,7 @@ func Start() {
 	//	log.Fatal(srv.ServeTLS(listener, *sslServerCert, *sslServerKey))
 	//}
 
-	log.Printf("NGINX Prometheus Exporter has successfully started")
+	//log.Printf("NGINX Prometheus Exporter has successfully started")
 }
 
 type userAgentRoundTripper struct {
