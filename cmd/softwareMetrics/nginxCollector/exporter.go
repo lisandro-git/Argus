@@ -34,6 +34,7 @@ func (pd *positiveDuration) Set(s string) error {
 	return nil
 }
 
+// parsePositiveDuration parses a string into a positiveDuration.
 func parsePositiveDuration(s string) (positiveDuration, error) {
 	dur, err := time.ParseDuration(s)
 	if err != nil {
@@ -45,11 +46,13 @@ func parsePositiveDuration(s string) (positiveDuration, error) {
 	return positiveDuration{dur}, nil
 }
 
+// createPositiveDurationFlag creates a flag with a positiveDuration value.
 func createPositiveDurationFlag(name string, value positiveDuration, usage string) *positiveDuration {
 	flag.Var(&value, name, usage)
 	return &value
 }
 
+// constLabel is a flag type for constant labels.
 type constLabel struct{ labels map[string]string }
 
 func (cl *constLabel) Set(s string) error {
@@ -66,6 +69,7 @@ func (cl *constLabel) String() string {
 	return fmt.Sprint(cl.labels)
 }
 
+// parseConstLabels parses a string into a constLabel.
 func parseConstLabels(labels string) (constLabel, error) {
 	if labels == "" {
 		return constLabel{}, nil
@@ -95,6 +99,7 @@ func parseConstLabels(labels string) (constLabel, error) {
 	return constLabel{labels: constLabels}, nil
 }
 
+// createConstLabelFlag creates a flag with a constLabel value.
 func createConstLabelsFlag(name string, value constLabel, usage string) *constLabel {
 	flag.Var(&value, name, usage)
 	return &value
@@ -117,6 +122,7 @@ func createClientWithRetries(getClient func() (interface{}, error), retries uint
 	return nil, err
 }
 
+// parseUnixSocketAddress parses a string into a sockerPath and a requestPath
 func parseUnixSocketAddress(address string) (string, string, error) {
 	addressParts := strings.Split(address, ":")
 	addressPartsLength := len(addressParts)
@@ -298,6 +304,7 @@ func Start() {
 	//log.Printf("NGINX Prometheus Exporter has successfully started")
 }
 
+// userAgentRoundTripper is a custom RoundTripper that adds a custom User-Agent header to every request.
 type userAgentRoundTripper struct {
 	agent string
 	rt    http.RoundTripper
@@ -309,6 +316,7 @@ func (rt *userAgentRoundTripper) RoundTrip(req *http.Request) (*http.Response, e
 	return rt.rt.RoundTrip(req)
 }
 
+// cloneRequest returns a deeply-copied clone of the provided *http.Request.
 func cloneRequest(req *http.Request) *http.Request {
 	r := new(http.Request)
 	*r = *req // shallow clone
