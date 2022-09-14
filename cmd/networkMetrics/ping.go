@@ -4,8 +4,8 @@ import (
 	"fmt"
 	ps "github.com/kotakanbe/go-pingscanner"
 	"github.com/prometheus/client_golang/prometheus"
+	log "github.com/sirupsen/logrus"
 	"net"
-	"os"
 	"time"
 
 	"github.com/digineo/go-ping"
@@ -89,8 +89,7 @@ func unicastPing() (*net.IPAddr, time.Duration) {
 	rtt, err := pinger.PingAttempts(remoteAddr, timeout, int(attempts))
 
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Error("Error when performing unicast pinging: ", err)
 	}
 	return remoteAddr, rtt
 }
