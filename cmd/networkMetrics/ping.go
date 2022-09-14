@@ -89,7 +89,7 @@ func unicastPing() (*net.IPAddr, time.Duration) {
 	rtt, err := pinger.PingAttempts(remoteAddr, timeout, int(attempts))
 
 	if err != nil {
-		log.Error("Error when performing unicast pinging: ", err)
+		log.Error("Error when performing unicast pinging on the following host: ", remoteAddr.IP)
 	}
 	return remoteAddr, rtt
 }
