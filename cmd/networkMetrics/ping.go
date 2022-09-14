@@ -22,24 +22,26 @@ var (
 	pinger         *ping.Pinger
 )
 
-type NetworkClient struct {
+// Network is a prometheus collector for network metrics
+type Network struct {
 	networkLatency *prometheus.Desc
 	//connectedClient *prometheus.Desc
 }
 
-func NewNetworkClient() *NetworkClient {
-	return &NetworkClient{
+// NewNetworkClient returns a new Network collector
+func NewNetworkClient() *Network {
+	return &Network{
 		networkLatency: prometheus.NewDesc("network_latency", "Network latency", []string{"host"}, nil),
 		//connectedClient: prometheus.NewDesc("connected_client", "Number of connected clients", []string{"host"}, nil),
 	}
 }
 
-func (n *NetworkClient) Describe(ch chan<- *prometheus.Desc) {
+func (n *Network) Describe(ch chan<- *prometheus.Desc) {
 	ch <- n.networkLatency
 	//ch <- n.connectedClient
 }
 
-func (n *NetworkClient) Collect(ch chan<- prometheus.Metric) {
+func (n *Network) Collect(ch chan<- prometheus.Metric) {
 	for _, host := range Hosts {
 		var _, latency = pingClient(true, false, host)
 		ch <- prometheus.MustNewConstMetric(n.networkLatency, prometheus.GaugeValue, (float64(latency.Microseconds()) / 1000.0), host)
@@ -47,6 +49,7 @@ func (n *NetworkClient) Collect(ch chan<- prometheus.Metric) {
 	//ch <- prometheus.MustNewConstMetric(n.connectedClient, prometheus.CounterValue, float64(getConnectedClient()), "connectedClient")
 }
 
+// pingClient sends a ping to the hosts that are in the Hosts file
 func pingClient(proto4, proto6 bool, host string) (*net.IPAddr, time.Duration) {
 	var network string
 	if bind == "" {
@@ -81,6 +84,7 @@ func pingClient(proto4, proto6 bool, host string) (*net.IPAddr, time.Duration) {
 	return unicastPing()
 }
 
+// unicastPing sends a ping to the remote host
 func unicastPing() (*net.IPAddr, time.Duration) {
 	rtt, err := pinger.PingAttempts(remoteAddr, timeout, int(attempts))
 
@@ -91,6 +95,7 @@ func unicastPing() (*net.IPAddr, time.Duration) {
 	return remoteAddr, rtt
 }
 
+// getConnectedClient returns the number of connected clients on the current subnetwork
 func getConnectedClient() int {
 	scanner := ps.PingScanner{
 		CIDR: SUBNET,
