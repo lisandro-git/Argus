@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// CpuUsage is a collector for cpu usage
 type CpuUsage struct {
 	CPUValues *prometheus.Desc
 }
@@ -27,6 +28,7 @@ var (
 	CPUStates = 5
 )
 
+// NewCpuUsage returns a new CpuUsage collector
 func NewCpuUsage() *CpuUsage {
 	return &CpuUsage{
 		CPUValues: prometheus.NewDesc("cpu_metric_value", "Current CPU Values", []string{"cpu_value"}, nil),
@@ -48,6 +50,7 @@ func (c *CpuUsage) Collect(ch chan<- prometheus.Metric) {
 	ch <- prometheus.MustNewConstMetric(c.CPUValues, prometheus.CounterValue, cpuTemp(), "CPUTemp")
 }
 
+// cpuTemp returns the current CPU temperature from /sys/class/thermal/thermal_zone0/temp
 func cpuTemp() float64 {
 	temp, err := ioutil.ReadFile("/sys/class/thermal/thermal_zone0/temp")
 	if err != nil {
