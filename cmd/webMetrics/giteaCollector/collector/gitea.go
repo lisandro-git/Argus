@@ -8,12 +8,14 @@ import (
 	"strconv"
 )
 
+// gCollector collects metrics from a gitea instance.
 type gCollector struct {
 	client   *[]client.ParsedRepos
 	metrics  map[string]*prometheus.Desc
 	upMetric prometheus.Gauge
 }
 
+// NewgCollector returns a new gCollector.
 func NewgCollector() *gCollector {
 	return &gCollector{
 		metrics: map[string]*prometheus.Desc{
@@ -39,6 +41,7 @@ func (g *gCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (g *gCollector) Collect(ch chan<- prometheus.Metric) {
+	// initiating a new Client
 	c, err := gitea.NewClient(cmd.GiteaLink, gitea.SetToken(cmd.GiteaApiToken))
 	if err != nil {
 		g.upMetric.Set(1)
@@ -48,10 +51,12 @@ func (g *gCollector) Collect(ch chan<- prometheus.Metric) {
 	g.upMetric.Set(1)
 	ch <- g.upMetric
 
+	// Getting the repo count and the repo list
 	var repoCount float64
 	g.client, repoCount = client.GetRepos(c)
 	ch <- prometheus.MustNewConstMetric(g.metrics["RepoCount"], prometheus.GaugeValue, repoCount)
 
+	// parsing and sending the repo list to prometheus
 	for _, repo := range *g.client {
 		ch <- prometheus.MustNewConstMetric(g.metrics["Repository"],
 			prometheus.CounterValue,

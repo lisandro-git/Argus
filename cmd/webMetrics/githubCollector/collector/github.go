@@ -7,10 +7,12 @@ import (
 	"strconv"
 )
 
+// gCollector is a custom collector for GitHub metrics
 type gCollector struct {
 	metrics map[string]*prometheus.Desc
 }
 
+// NewgCollector returns a new gCollector
 func NewgCollector() *gCollector {
 	return &gCollector{
 		metrics: map[string]*prometheus.Desc{
@@ -44,8 +46,10 @@ func (g *gCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (g *gCollector) Collect(ch chan<- prometheus.Metric) {
+	// Getting the repositories
 	var ghRepo []*github.Repository = client.GetGithubRepos()
 
+	// Parsing and sending the metrics to prometheus
 	for _, repo := range ghRepo {
 		ch <- prometheus.MustNewConstMetric(
 			g.metrics["Repository"],
@@ -64,6 +68,7 @@ func (g *gCollector) Collect(ch chan<- prometheus.Metric) {
 			repo.GetUpdatedAt().String(),
 		)
 	}
+	// Sending the repo count
 	ch <- prometheus.MustNewConstMetric(
 		g.metrics["RepoCount"],
 		prometheus.GaugeValue,

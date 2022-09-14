@@ -7,6 +7,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// GetGithubRepos returns a list of all repositories for the authenticated user.
 func GetGithubRepos() []*github.Repository {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(

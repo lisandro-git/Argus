@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// ParsedRepos is a struct that contains the data that we want to send to prometheus
 type ParsedRepos struct {
 	ID       int64
 	Name     string
@@ -16,6 +17,7 @@ type ParsedRepos struct {
 	Updated  time.Time
 }
 
+// GetRepos returns a list of all the repos in the gitea instance
 func GetRepos(client *gitea.Client) (*[]ParsedRepos, float64) {
 	var parsedRepo []ParsedRepos
 	result, _, err := client.ListMyRepos(gitea.ListReposOptions{})
